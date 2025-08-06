@@ -12,7 +12,7 @@ A simple web tool to visualize encoded polyline routes (from OSRM or similar sou
 
 ## Demo
 
-[Live Demo on GitHub Pages](https://your-username.github.io/polytrace)
+[Live Demo on GitHub Pages](https://anggaprytn.github.io/osrm-route-viewer/)
 
 ## How to Use
 
