@@ -37,8 +37,13 @@
         border-radius: 10px;
         border: 1px solid #ccc;
       }
-      button {
+      .controls {
+        display: flex;
+        gap: 10px;
         margin-top: 10px;
+        flex-wrap: wrap;
+      }
+      button {
         padding: 10px 16px;
         font-weight: 600;
         border: none;
@@ -56,22 +61,39 @@
   <body>
     <h2>Interactive OSRM Route Viewer</h2>
     <textarea id="jsonInput" placeholder="OSRM route JSON will appear here..."></textarea>
-    <button onclick="resetMap()">Reset Map</button>
+    <div class="controls">
+      <button onclick="resetMap()">Reset Map</button>
+      <button onclick="toggleTheme()" id="themeToggle">Toggle Theme</button>
+    </div>
     <div id="map"></div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const tileLayer = prefersDark
-        ? L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-            attribution: "&copy; <a href='https://carto.com/'>CARTO</a>",
-          })
-        : L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-            attribution: "&copy; OpenStreetMap contributors",
-          });
-
+      let isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      let tileLayer = null;
       let map = L.map("map").setView([-6.2, 106.8], 13);
-      tileLayer.addTo(map);
+
+      function setMapTheme(dark) {
+        if (tileLayer) map.removeLayer(tileLayer);
+        tileLayer = dark
+          ? L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+              attribution: "&copy; <a href='https://carto.com/'>CARTO</a>",
+            })
+          : L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+              attribution: "&copy; OpenStreetMap contributors",
+            });
+        tileLayer.addTo(map);
+      }
+
+      setMapTheme(isDark);
+
+      function toggleTheme() {
+        isDark = !isDark;
+        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        setMapTheme(isDark);
+        document.body.style.backgroundColor = isDark ? '#111' : 'Canvas';
+        document.body.style.color = isDark ? '#eee' : 'CanvasText';
+      }
 
       let clickCount = 0;
       let startLatLng = null;
